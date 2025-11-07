@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tongue Twister Trainer</title>
+<title>🎤 Tongue Twister Trainer</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -58,9 +58,14 @@ button { cursor: pointer; }
         <option value="consonant">Consonant Contrasts</option>
         <option value="vowel">Vowel Contrasts</option>
     </select>
+
+    <label>Sounds:</label>
+    <select id="soundSelect">
+        <option value="">-- Select Sounds --</option>
+    </select>
 </div>
 
-<p id="twister">Select theme and type to start!</p>
+<p id="twister">Select theme, type, and sound to start!</p>
 <p id="message">🎧 <b>Speak clearly and try to match the rhythm!</b></p>
 
 <div>
@@ -79,49 +84,105 @@ button { cursor: pointer; }
 
 <script>
 const tongueTwisters = {
-    food: { consonant: ["Betty bought a bit of better butter.","Tom tastes ten delicious donuts.","Five fine fruits for very funny friends.","Greedy goats gobbled green grapes."],
-            vowel: ["Eat sweet peach pits quickly.","A fat man must munch much jam.","Cool cooks put soup in good bowls."] },
-    travel: { consonant: ["Ten tiny trains drove down the track.","Quick cars go great distances.","She sells shiny ship sails.","Ralph rolled along little lanes."],
-              vowel: ["The plane flies high in the sky.","The ship set sail at six.","The bus passed the large park."] },
-    people: { consonant: ["Larry rarely really likes red lilies.","Many nice men made nine names.","Tina told Dan to tidy the desk.","Very few families find free food."],
-              vowel: ["Sit and see the city’s sheep.","That bad man met ten men.","I like loud, bright lights."] },
-    home: { consonant: ["Polly bought pretty blue plates.","Tim took two clean cups.","She stacks six shiny spoons.","Nina lent nine little lamps."],
-            vowel: ["Fill every bin with red pens.","Kate’s white tile shines bright.","Luke looked for the blue book."] }
+  food: {
+    consonant: {
+      "/p/ vs /b/": "Betty bought a bit of better butter.",
+      "/t/ vs /d/": "Tom tastes ten delicious donuts.",
+      "/f/ vs /v/": "Five fine fruits for very funny friends.",
+      "/k/ vs /g/": "Greedy goats gobbled green grapes."
+    },
+    vowel: {
+      "/iː/ vs /ɪ/": "Eat sweet peach pits quickly.",
+      "/æ/ vs /ʌ/": "A fat man must munch much jam.",
+      "/uː/ vs /ʊ/": "Cool cooks put soup in good bowls."
+    }
+  },
+  travel: {
+    consonant: {
+      "/t/ vs /d/": "Ten tiny trains drove down the track.",
+      "/k/ vs /g/": "Quick cars go great distances.",
+      "/s/ vs /ʃ/": "She sells shiny ship sails.",
+      "/l/ vs /r/": "Ralph rolled along little lanes."
+    },
+    vowel: {
+      "/eɪ/ vs /aɪ/": "The plane flies high in the sky.",
+      "/ɪ/ vs /e/": "The ship set sail at six.",
+      "/ʌ/ vs /ɑː/": "The bus passed the large park."
+    }
+  },
+  people: {
+    consonant: {
+      "/l/ vs /r/": "Larry rarely really likes red lilies.",
+      "/m/ vs /n/": "Many nice men made nine names.",
+      "/t/ vs /d/": "Tina told Dan to tidy the desk.",
+      "/f/ vs /v/": "Very few families find free food."
+    },
+    vowel: {
+      "/ɪ/ vs /iː/": "Sit and see the city’s sheep.",
+      "/æ/ vs /ɛ/": "That bad man met ten men.",
+      "/aɪ/ vs /aʊ/": "I like loud, bright lights."
+    }
+  },
+  home: {
+    consonant: {
+      "/p/ vs /b/": "Polly bought pretty blue plates.",
+      "/t/ vs /k/": "Tim took two clean cups.",
+      "/s/ vs /ʃ/": "She stacks six shiny spoons.",
+      "/n/ vs /l/": "Nina lent nine little lamps."
+    },
+    vowel: {
+      "/ɪ/ vs /e/": "Fill every bin with red pens.",
+      "/eɪ/ vs /aɪ/": "Kate’s white tile shines bright.",
+      "/uː/ vs /ʊ/": "Luke looked for the blue book."
+    }
+  }
 };
 
-let currentTheme = "", currentType = "", currentTwister = "";
-let startTime, listenSpeed = 1.0;
+let currentTheme = "", currentType = "", currentPair = "", currentTwister = "";
+let listenSpeed = 1.0;
 let historyData = {};
+const themeSelect = document.getElementById("themeSelect");
+const typeSelect = document.getElementById("typeSelect");
+const soundSelect = document.getElementById("soundSelect");
 
-function getRandomTwister() {
-    const list = tongueTwisters[currentTheme][currentType];
-    return list[Math.floor(Math.random()*list.length)];
+function resetAll(){
+  document.getElementById("twister").textContent="Select theme, type, and sound to start!";
+  document.getElementById("feedback").textContent="";
+  document.getElementById("history").innerHTML="";
+  historyData={};
 }
 
-document.getElementById("themeSelect").addEventListener("change", (e)=>{
-    currentTheme = e.target.value;
-    document.getElementById("twister").textContent = "Select type to start!";
-    document.getElementById("feedback").textContent = "";
-    document.getElementById("history").innerHTML = "";
-    historyData = {};
+themeSelect.addEventListener("change", (e)=>{
+  currentTheme = e.target.value;
+  resetAll();
+  updateSounds();
 });
 
-document.getElementById("typeSelect").addEventListener("change", (e)=>{
-    currentType = e.target.value;
-    if(currentTheme && currentType){
-        currentTwister = getRandomTwister();
-        document.getElementById("twister").textContent = currentTwister;
-        document.getElementById("feedback").textContent = "";
-        document.getElementById("history").innerHTML = "";
-        historyData = {};
-    }
+typeSelect.addEventListener("change", (e)=>{
+  currentType = e.target.value;
+  resetAll();
+  updateSounds();
 });
 
-document.getElementById("nextBtn").addEventListener("click", ()=>{
-    if(!currentTheme || !currentType) return;
-    currentTwister = getRandomTwister();
-    document.getElementById("twister").textContent = currentTwister;
-    document.getElementById("feedback").textContent = "";
+function updateSounds(){
+  soundSelect.innerHTML = '<option value="">-- Select Sounds --</option>';
+  if(currentTheme && currentType){
+    const pairs = Object.keys(tongueTwisters[currentTheme][currentType]);
+    pairs.forEach(p=>{
+      const opt = document.createElement("option");
+      opt.value = p; opt.textContent = p;
+      soundSelect.appendChild(opt);
+    });
+  }
+}
+
+soundSelect.addEventListener("change", ()=>{
+  currentPair = soundSelect.value;
+  if(currentPair){
+    currentTwister = tongueTwisters[currentTheme][currentType][currentPair];
+    document.getElementById("twister").textContent=currentTwister;
+    resetAll();
+  }
 });
 
 document.querySelectorAll(".speed-btn").forEach(btn=>{
@@ -138,7 +199,14 @@ document.getElementById("listenBtn").addEventListener("click", ()=>{
     speechSynthesis.speak(utter);
 });
 
-// === Speech Recognition ===
+document.getElementById("nextBtn").addEventListener("click", ()=>{
+    if(!currentTheme || !currentType) return;
+    currentPair = "";
+    currentTwister="";
+    resetAll();
+    soundSelect.value="";
+});
+
 if('webkitSpeechRecognition' in window){
     const recognition = new webkitSpeechRecognition();
     recognition.lang="en-US";
@@ -149,41 +217,39 @@ if('webkitSpeechRecognition' in window){
         if(!currentTwister) return alert("Select a twister first!");
         recognition.start();
         startTime = new Date().getTime();
-        document.getElementById("feedback").textContent = "🎧 Listening...";
+        document.getElementById("feedback").textContent="🎧 Listening...";
     };
 
     recognition.onresult=(event)=>{
         const endTime = new Date().getTime();
-        const duration = (endTime-startTime)/1000; 
+        const duration = (endTime-startTime)/1000;
         const transcript = event.results[0][0].transcript.toLowerCase();
         const target = currentTwister.toLowerCase();
 
-        // скорость на слово
         const words = target.split(" ").length;
         const speedPerWord = duration/words;
         let speedEval = "";
-        // градация по выбранной скорости
+
         const thresholds = { slow: [0.65,0.85,1.1], normal: [0.5,0.7,0.9], fast: [0.35,0.5,0.7] };
         let key="";
         if(listenSpeed<=0.8) key="slow";
         else if(listenSpeed<=1.1) key="normal";
         else key="fast";
 
-        if(speedPerWord<=thresholds[key][0]) speedEval = "<span class='speed-good'>🏆 Excellent!</span>";
-        else if(speedPerWord<=thresholds[key][1]) speedEval = "<span class='speed-ok'>👍 Good</span>";
-        else if(speedPerWord<=thresholds[key][2]) speedEval = "<span class='speed-ok'>👌 Okay</span>";
-        else speedEval = "<span class='speed-bad'>🐢 Too slow</span>";
+        if(speedPerWord<=thresholds[key][0]) speedEval="<span class='speed-good'>🏆 Excellent!</span>";
+        else if(speedPerWord<=thresholds[key][1]) speedEval="<span class='speed-ok'>👍 Good</span>";
+        else if(speedPerWord<=thresholds[key][2]) speedEval="<span class='speed-ok'>👌 Okay</span>";
+        else speedEval="<span class='speed-bad'>🐢 Too slow</span>";
 
         let feedbackText="";
         if(transcript.includes(target.split(" ")[0])){
-            feedbackText = `✅ Recognized: "${transcript}"<br>${speedEval}`;
+            feedbackText=`✅ Recognized: "${transcript}"<br>${speedEval}`;
         }else{
-            feedbackText = `❌ Didn't match. Try again.`;
+            feedbackText=`❌ Didn't match. Try again.`;
         }
 
-        document.getElementById("feedback").innerHTML = feedbackText;
+        document.getElementById("feedback").innerHTML=feedbackText;
 
-        // история
         if(!historyData[currentTwister]) historyData[currentTwister]=[];
         historyData[currentTwister].unshift(feedbackText);
         if(historyData[currentTwister].length>5) historyData[currentTwister].pop();
