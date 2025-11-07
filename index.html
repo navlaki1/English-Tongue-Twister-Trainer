@@ -50,13 +50,13 @@ button:active { background: #084a9d; }
 #twister {
   margin: 12px 0;
   font-weight: 900;
-  color: red;          /* красная скороговорка */
-  font-size: 22px;     /* увеличенный размер */
+  color: red;
+  font-size: 22px;
   text-align: center;
 }
 
 #message {
-  font-size: 14px;       /* маленькая подсказка */
+  font-size: 14px;
   color: darkgreen;
   font-weight: bold;
   text-align: center;
@@ -64,7 +64,7 @@ button:active { background: #084a9d; }
 }
 
 #feedback { font-size: 16px; margin-top: 12px; text-align: center; color:#0a66c2; }
-#history { margin-top: 15px; font-size: 14px; color: #0a66c2; text-align: left; }
+#history { margin-top: 10px; font-size: 14px; color: #0a66c2; text-align: left; }
 
 .speed-select { margin: 6px 0; }
 .button-row { display: flex; gap: 10px; margin-top: 5px; }
@@ -114,7 +114,6 @@ button:active { background: #084a9d; }
   <button id="speakBtn">🎙️ Speak</button>
 </div>
 
-<p id="feedback"></p>
 <div id="history"></div>
 </div>
 
@@ -138,7 +137,6 @@ const speedSelect=document.getElementById("speedSelect");
 
 function resetAll(){
   document.getElementById("twister").textContent="—";
-  document.getElementById("feedback").textContent="";
   document.getElementById("history").innerHTML="";
   historyData={};
 }
@@ -162,7 +160,6 @@ soundSelect.addEventListener("change",()=>{
   if(currentPair){
     currentTwister=tongueTwisters[currentTheme][currentType][currentPair];
     document.getElementById("twister").textContent=currentTwister;
-    document.getElementById("feedback").textContent="";
     document.getElementById("history").innerHTML="";
     historyData={};
   }
@@ -185,7 +182,6 @@ if('webkitSpeechRecognition' in window){
   document.getElementById("speakBtn").onclick=()=>{
     if(!currentTwister) return alert("Select a twister first!");
     recognition.start(); startTime=new Date().getTime();
-    document.getElementById("feedback").textContent="🎧 Listening...";
   };
 
   recognition.onresult=(event)=>{
@@ -193,7 +189,6 @@ if('webkitSpeechRecognition' in window){
     const transcript=event.results[0][0].transcript.toLowerCase();
     const target=currentTwister.toLowerCase();
 
-    // точность
     function similarity(a,b){
       let longer=a.length>b.length?a:b;
       let shorter=a.length>b.length?b:a;
@@ -216,7 +211,6 @@ if('webkitSpeechRecognition' in window){
 
     const acc=(similarity(target,transcript)*100).toFixed(1);
 
-    // оценка скорости
     let expectedTime=target.split(" ").length*0.6/listenSpeed;
     let speedLabel="";
     if(duration<=expectedTime*0.7) speedLabel="🚀 Very fast!";
@@ -224,12 +218,9 @@ if('webkitSpeechRecognition' in window){
     else if(duration<=expectedTime*1.4) speedLabel="🚶 Slow";
     else speedLabel="🐢 Very slow";
 
-    let feedbackText=`Recognized: "${transcript}" | Accuracy: ${acc}% | Speed: ${speedLabel}`;
-    document.getElementById("feedback").textContent=feedbackText;
-
-    // история последних 5 попыток
+    // сохраняем историю последних 5 попыток
     if(!historyData[currentTwister]) historyData[currentTwister]=[];
-    historyData[currentTwister].unshift(feedbackText);
+    historyData[currentTwister].unshift(`Accuracy: ${acc}% | Speed: ${speedLabel}`);
     if(historyData[currentTwister].length>5) historyData[currentTwister].pop();
 
     let histHTML="<h3>Recent Attempts:</h3><ul>";
@@ -238,11 +229,11 @@ if('webkitSpeechRecognition' in window){
   };
 
   recognition.onerror=(e)=>{
-    document.getElementById("feedback").textContent="⚠️ Error or no speech detected. Try again.";
+    document.getElementById("history").innerHTML="⚠️ Error or no speech detected. Try again.";
   };
 }else{
   document.getElementById("speakBtn").disabled=true;
-  document.getElementById("feedback").textContent="❌ Speech recognition not supported in this browser.";
+  document.getElementById("history").innerHTML="❌ Speech recognition not supported in this browser.";
 }
 </script>
 
