@@ -63,7 +63,6 @@ button:active { background: #084a9d; }
   margin-bottom: 10px;
 }
 
-#feedback { font-size: 16px; margin-top: 12px; text-align: center; color:#0a66c2; }
 #history { margin-top: 10px; font-size: 14px; color: #0a66c2; text-align: left; }
 
 .speed-select { margin: 6px 0; }
@@ -220,11 +219,14 @@ if('webkitSpeechRecognition' in window){
 
     // сохраняем историю последних 5 попыток
     if(!historyData[currentTwister]) historyData[currentTwister]=[];
-    historyData[currentTwister].unshift(`Accuracy: ${acc}% | Speed: ${speedLabel}`);
+    historyData[currentTwister].unshift({acc, speedLabel});
     if(historyData[currentTwister].length>5) historyData[currentTwister].pop();
 
-    let histHTML="<h3>Recent Attempts:</h3><ul>";
-    historyData[currentTwister].forEach(h=>histHTML+=`<li>${h}</li>`); histHTML+="</ul>";
+    let histHTML="<h3>Recent Attempts:</h3><ol>";
+    historyData[currentTwister].forEach(h=>{
+      histHTML+=`<li>Accuracy: ${h.acc}% | Speed: ${h.speedLabel}</li>`;
+    }); 
+    histHTML+="</ol>";
     document.getElementById("history").innerHTML=histHTML;
   };
 
