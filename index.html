@@ -229,7 +229,9 @@ if('webkitSpeechRecognition' in window){
     }
 
     const acc=(similarity(target,spoken)*100).toFixed(1);
-    let expectedTime=target.split(" ").length*0.6/listenSpeed;
+
+    // Оценка скорости всегда по нормальной скорости
+    let expectedTime=target.split(" ").length*0.6; 
     let speedLabel="";
     if(duration<=expectedTime*0.7) speedLabel="🚀 Very fast!";
     else if(duration<=expectedTime*1.0) speedLabel="🏃 Fast";
