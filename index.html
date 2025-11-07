@@ -217,13 +217,13 @@ if('webkitSpeechRecognition' in window){
     else if(duration<=expectedTime*1.4) speedLabel="🚶 Slow";
     else speedLabel="🐢 Very slow";
 
-    // сохраняем историю последних 5 попыток
+    // сохраняем историю последних 5 попыток, новые вниз
     if(!historyData[currentTwister]) historyData[currentTwister]=[];
-    historyData[currentTwister].unshift({acc, speedLabel});
-    if(historyData[currentTwister].length>5) historyData[currentTwister].pop();
+    historyData[currentTwister].push({acc, speedLabel});
+    if(historyData[currentTwister].length>5) historyData[currentTwister].shift();
 
     let histHTML="<h3>Recent Attempts:</h3><ol>";
-    historyData[currentTwister].forEach(h=>{
+    historyData[currentTwister].forEach((h,i)=>{
       histHTML+=`<li>Accuracy: ${h.acc}% | Speed: ${h.speedLabel}</li>`;
     }); 
     histHTML+="</ol>";
