@@ -63,9 +63,19 @@ button:active { background: #084a9d; }
   margin-bottom: 10px;
 }
 
-#history { margin-top: 10px; font-size: 14px; color: #0a66c2; text-align: left; }
+#recognizedText { 
+  margin-top: 5px; 
+  font-size: 14px; 
+  color: #555; 
+  font-style: italic; 
+}
 
-#recognizedText { margin-top: 5px; font-size: 14px; color: #555; font-style: italic; }
+#history { 
+  margin-top: 10px; 
+  font-size: 14px; 
+  color: #0a66c2; 
+  text-align: left; 
+}
 
 .speed-select { margin: 6px 0; }
 .button-row { display: flex; gap: 10px; margin-top: 5px; }
@@ -191,6 +201,8 @@ if('webkitSpeechRecognition' in window){
   recognition.onresult=(event)=>{
     const duration=(new Date().getTime()-startTime)/1000;
     const transcript=event.results[0][0].transcript;
+
+    // Показываем распознанный текст
     document.getElementById("recognizedText").textContent="Recognized: " + transcript;
 
     const target=currentTwister.toLowerCase();
@@ -217,7 +229,6 @@ if('webkitSpeechRecognition' in window){
     }
 
     const acc=(similarity(target,spoken)*100).toFixed(1);
-
     let expectedTime=target.split(" ").length*0.6/listenSpeed;
     let speedLabel="";
     if(duration<=expectedTime*0.7) speedLabel="🚀 Very fast!";
@@ -225,7 +236,6 @@ if('webkitSpeechRecognition' in window){
     else if(duration<=expectedTime*1.4) speedLabel="🚶 Slow";
     else speedLabel="🐢 Very slow";
 
-    // новые попытки вниз
     if(!historyData[currentTwister]) historyData[currentTwister]=[];
     historyData[currentTwister].push({acc,speedLabel});
     if(historyData[currentTwister].length>5) historyData[currentTwister].shift();
