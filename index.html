@@ -46,24 +46,30 @@ button {
   font-weight: 600;
 }
 button:active { background: #084a9d; }
+
 #twister {
   margin: 12px 0;
-  font-weight: 600;
-  color: #0a66c2;
+  font-weight: 700;
+  color: red;          /* красная скороговорка */
+  font-size: 20px;     /* увеличенный размер */
   text-align: center;
 }
+
 #message {
-  font-weight: bold;
+  font-size: 14px;       /* маленькая подсказка */
   color: darkgreen;
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-weight: bold;
   text-align: center;
+  margin-bottom: 10px;
 }
+
 #feedback { font-size: 16px; margin-top: 12px; text-align: center; color:#0a66c2; }
 #history { margin-top: 15px; font-size: 14px; color: #0a66c2; text-align: left; }
+
 .speed-select { margin: 6px 0; }
 .button-row { display: flex; gap: 10px; margin-top: 5px; }
 .button-row button { flex: 1; }
+
 .speed-good { color: green; font-weight: bold; }
 .speed-ok { color: orange; font-weight: bold; }
 .speed-bad { color: red; font-weight: bold; }
@@ -118,30 +124,12 @@ button:active { background: #084a9d; }
 
 <script>
 const tongueTwisters = {
-  animal: {
-    consonant: {"/p/ vs /b/":"Big brown bears baked blueberry pies.","/s/ vs /ʃ/":"Six slippery snails slid slowly seaward.","/l/ vs /r/":"Little lions love running around rocky rivers.","/t/ vs /d/":"Tiny tigers don’t talk during dinner.","/f/ vs /v/":"Five furry foxes found very fine feathers."},
-    vowel: {"/iː/ vs /ɪ/":"Three sheep sleep in a ship.","/æ/ vs /ɛ/":"A fat cat sat and met a hen.","/uː/ vs /ʊ/":"A moose stood by the full pool."}
-  },
-  plant: {
-    consonant: {"/p/ vs /b/":"Peter plants bright pink begonias.","/f/ vs /θ/":"Thick thorns and fine ferns.","/s/ vs /ʃ/":"Shiny seeds shimmer softly.","/m/ vs /n/":"Many new mosses need morning mist."},
-    vowel: {"/æ/ vs /ɑː/":"The black branch barked hard.","/eɪ/ vs /aɪ/":"Rain makes vines rise high.","/ɜː/ vs /ɔː/":"The fern by the thorn turned toward the dawn."}
-  },
-  food: {
-    consonant: {"/p/ vs /b/":"Betty bought a bit of better butter.","/t/ vs /d/":"Tom tastes ten delicious donuts.","/f/ vs /v/":"Five fine fruits for very funny friends.","/k/ vs /g/":"Greedy goats gobbled green grapes."},
-    vowel: {"/iː/ vs /ɪ/":"Eat sweet peach pits quickly.","/æ/ vs /ʌ/":"A fat man must munch much jam.","/uː/ vs /ʊ/":"Cool cooks put soup in good bowls."}
-  },
-  travel: {
-    consonant: {"/t/ vs /d/":"Ten tiny trains drove down the track.","/k/ vs /g/":"Quick cars go great distances.","/s/ vs /ʃ/":"She sells shiny ship sails.","/l/ vs /r/":"Ralph rolled along little lanes."},
-    vowel: {"/eɪ/ vs /aɪ/":"The plane flies high in the sky.","/ɪ/ vs /e/":"The ship set sail at six.","/ʌ/ vs /ɑː/":"The bus passed the large park."}
-  },
-  people: {
-    consonant: {"/l/ vs /r/":"Larry rarely really likes red lilies.","/m/ vs /n/":"Many nice men made nine names.","/t/ vs /d/":"Tina told Dan to tidy the desk.","/f/ vs /v/":"Very few families find free food."},
-    vowel: {"/ɪ/ vs /iː/":"Sit and see the city’s sheep.","/æ/ vs /ɛ/":"That bad man met ten men.","/aɪ/ vs /aʊ/":"I like loud, bright lights."}
-  },
-  home: {
-    consonant: {"/p/ vs /b/":"Polly bought pretty blue plates.","/t/ vs /k/":"Tim took two clean cups.","/s/ vs /ʃ/":"She stacks six shiny spoons.","/n/ vs /l/":"Nina lent nine little lamps."},
-    vowel: {"/ɪ/ vs /e/":"Fill every bin with red pens.","/eɪ/ vs /aɪ/":"Kate’s white tile shines bright.","/uː/ vs /ʊ/":"Luke looked for the blue book."}
-  }
+  animal: { consonant:{"/p/ vs /b/":"Big brown bears baked blueberry pies.","/s/ vs /ʃ/":"Six slippery snails slid slowly seaward.","/l/ vs /r/":"Little lions love running around rocky rivers.","/t/ vs /d/":"Tiny tigers don’t talk during dinner.","/f/ vs /v/":"Five furry foxes found very fine feathers."}, vowel:{"/iː/ vs /ɪ/":"Three sheep sleep in a ship.","/æ/ vs /ɛ/":"A fat cat sat and met a hen.","/uː/ vs /ʊ/":"A moose stood by the full pool."} },
+  plant: { consonant:{"/p/ vs /b/":"Peter plants bright pink begonias.","/f/ vs /θ/":"Thick thorns and fine ferns.","/s/ vs /ʃ/":"Shiny seeds shimmer softly.","/m/ vs /n/":"Many new mosses need morning mist."}, vowel:{"/æ/ vs /ɑː/":"The black branch barked hard.","/eɪ/ vs /aɪ/":"Rain makes vines rise high.","/ɜː/ vs /ɔː/":"The fern by the thorn turned toward the dawn."} },
+  food: { consonant:{"/p/ vs /b/":"Betty bought a bit of better butter.","/t/ vs /d/":"Tom tastes ten delicious donuts.","/f/ vs /v/":"Five fine fruits for very funny friends.","/k/ vs /g/":"Greedy goats gobbled green grapes."}, vowel:{"/iː/ vs /ɪ/":"Eat sweet peach pits quickly.","/æ/ vs /ʌ/":"A fat man must munch much jam.","/uː/ vs /ʊ/":"Cool cooks put soup in good bowls."} },
+  travel: { consonant:{"/t/ vs /d/":"Ten tiny trains drove down the track.","/k/ vs /g/":"Quick cars go great distances.","/s/ vs /ʃ/":"She sells shiny ship sails.","/l/ vs /r/":"Ralph rolled along little lanes."}, vowel:{"/eɪ/ vs /aɪ/":"The plane flies high in the sky.","/ɪ/ vs /e/":"The ship set sail at six.","/ʌ/ vs /ɑː/":"The bus passed the large park."} },
+  people: { consonant:{"/l/ vs /r/":"Larry rarely really likes red lilies.","/m/ vs /n/":"Many nice men made nine names.","/t/ vs /d/":"Tina told Dan to tidy the desk.","/f/ vs /v/":"Very few families find free food."}, vowel:{"/ɪ/ vs /iː/":"Sit and see the city’s sheep.","/æ/ vs /ɛ/":"That bad man met ten men.","/aɪ/ vs /aʊ/":"I like loud, bright lights."} },
+  home: { consonant:{"/p/ vs /b/":"Polly bought pretty blue plates.","/t/ vs /k/":"Tim took two clean cups.","/s/ vs /ʃ/":"She stacks six shiny spoons.","/n/ vs /l/":"Nina lent nine little lamps."}, vowel:{"/ɪ/ vs /e/":"Fill every bin with red pens.","/eɪ/ vs /aɪ/":"Kate’s white tile shines bright.","/uː/ vs /ʊ/":"Luke looked for the blue book."} }
 };
 
 let currentTheme="", currentType="", currentPair="", currentTwister="";
@@ -211,7 +199,6 @@ if('webkitSpeechRecognition' in window){
     let speedPerWord=duration/target.split(" ").length;
     let speedEval="";
 
-    // Оценка скорости с учётом выбранного режима
     let normalRate=1.0, slowRate=0.7, fastRate=1.3;
     if(listenSpeed===slowRate){
       if(speedPerWord<=0.7) speedEval="<span class='speed-good'>🏆 Excellent!</span>";
