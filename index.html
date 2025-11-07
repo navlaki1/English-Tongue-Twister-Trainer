@@ -69,10 +69,6 @@ button:active { background: #084a9d; }
 .speed-select { margin: 6px 0; }
 .button-row { display: flex; gap: 10px; margin-top: 5px; }
 .button-row button { flex: 1; }
-
-.speed-good { color: green; font-weight: bold; }
-.speed-ok { color: orange; font-weight: bold; }
-.speed-bad { color: red; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -196,27 +192,42 @@ if('webkitSpeechRecognition' in window){
     const duration=(new Date().getTime()-startTime)/1000;
     const transcript=event.results[0][0].transcript.toLowerCase();
     const target=currentTwister.toLowerCase();
-    let speedPerWord=duration/target.split(" ").length;
-    let speedEval="";
 
-    let normalRate=1.0, slowRate=0.7, fastRate=1.3;
-    if(listenSpeed===slowRate){
-      if(speedPerWord<=0.7) speedEval="<span class='speed-good'>🏆 Excellent!</span>";
-      else if(speedPerWord<=1.0) speedEval="<span class='speed-ok'>👍 Good</span>";
-      else speedEval="<span class='speed-bad'>🐢 Too slow</span>";
-    } else if(listenSpeed===normalRate){
-      if(speedPerWord<=0.5) speedEval="<span class='speed-good'>🏆 Excellent!</span>";
-      else if(speedPerWord<=0.7) speedEval="<span class='speed-ok'>👍 Good</span>";
-      else speedEval="<span class='speed-bad'>🐢 Too slow</span>";
-    } else {
-      if(speedPerWord<=0.4) speedEval="<span class='speed-good'>🏆 Excellent!</span>";
-      else if(speedPerWord<=0.55) speedEval="<span class='speed-ok'>👍 Good</span>";
-      else speedEval="<span class='speed-bad'>🐢 Too slow</span>";
+    // точность
+    function similarity(a,b){
+      let longer=a.length>b.length?a:b;
+      let shorter=a.length>b.length?b:a;
+      if(longer.length===0) return 1.0;
+      let edits=levenshtein(longer,shorter);
+      return (longer.length-edits)/longer.length;
     }
 
-    let feedbackText=transcript.includes(target.split(" ")[0])?`✅ Recognized: "${transcript}"<br>${speedEval}`:`❌ Didn't match. Try again.`;
-    document.getElementById("feedback").innerHTML=feedbackText;
+    function levenshtein(a,b){
+      const matrix=[];
+      for(let i=0;i<=b.length;i++) matrix[i]=[i];
+      for(let j=0;j<=a.length;j++) matrix[0][j]=j;
+      for(let i=1;i<=b.length;i++){
+        for(let j=1;j<=a.length;j++){
+          matrix[i][j]=b[i-1]===a[j-1]?matrix[i-1][j-1]:Math.min(matrix[i-1][j-1]+1,matrix[i][j-1]+1,matrix[i-1][j]+1);
+        }
+      }
+      return matrix[b.length][a.length];
+    }
 
+    const acc=(similarity(target,transcript)*100).toFixed(1);
+
+    // оценка скорости
+    let expectedTime=target.split(" ").length*0.6/listenSpeed;
+    let speedLabel="";
+    if(duration<=expectedTime*0.7) speedLabel="🚀 Very fast!";
+    else if(duration<=expectedTime*1.0) speedLabel="🏃 Fast";
+    else if(duration<=expectedTime*1.4) speedLabel="🚶 Slow";
+    else speedLabel="🐢 Very slow";
+
+    let feedbackText=`Recognized: "${transcript}" | Accuracy: ${acc}% | Speed: ${speedLabel}`;
+    document.getElementById("feedback").textContent=feedbackText;
+
+    // история последних 5 попыток
     if(!historyData[currentTwister]) historyData[currentTwister]=[];
     historyData[currentTwister].unshift(feedbackText);
     if(historyData[currentTwister].length>5) historyData[currentTwister].pop();
